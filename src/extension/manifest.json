@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "HTML PGP",
+  "description": "OpenPGP keys, encryption and signatures in a side panel, like Kleopatra. Offline: nothing leaves your computer.",
+  "minimum_chrome_version": "116",
+  "action": { "default_title": "Open HTML PGP" },
+  "side_panel": { "default_path": "panel.html" },
+  "background": { "service_worker": "background.js", "type": "module" },
+  "permissions": ["sidePanel", "contextMenus", "activeTab", "scripting", "storage"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; connect-src 'none'; form-action 'none'; base-uri 'none'"
+  },
+  "icons": { "16": "icon-16.png", "32": "icon-32.png", "48": "icon-48.png", "128": "icon-128.png" }
+}

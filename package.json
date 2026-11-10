@@ -1,0 +1,30 @@
+{
+  "name": "html-pgp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "An OpenPGP key manager and encryption tool in the spirit of Kleopatra \u2014 one standalone HTML file, a PWA and a Chrome extension",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20.15"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "watch": "node build.mjs --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "node tests/pgp.mjs && node tests/keyring.mjs && node tests/gnupg.mjs && node tests/i18n.mjs",
+    "test:browser": "npm run test:page && npm run test:extension",
+    "test:page": "node tests/app.mjs",
+    "test:extension": "node tests/extension.mjs",
+    "i18n": "node tools/i18n.mjs",
+    "shots": "node tools/shots.mjs",
+    "icons": "node tools/icons.mjs",
+    "check": "npm run typecheck && npm test && npm run build && npm run test:browser"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.3.6",
+    "esbuild": "^0.28.2",
+    "openpgp": "^6.3.2",
+    "typescript": "^7.0.2"
+  }
+}
