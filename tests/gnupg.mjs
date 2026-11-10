@@ -43,6 +43,8 @@ try {
     // GnuPG takes the secret key with its passphrase, as an export from here would give it.
     const imported = gpg(['--passphrase', 'pw', '--import'], P.exportKeys([key], { armor: true, secret: true }));
     check(`${algorithm.id}: gpg imports the secret key`, imported.status, 0);
+    // What gpg said is the only clue on a CI runner whose GnuPG is not the one here.
+    if (imported.status) console.error(imported.err);
     const listed = colons(['--list-secret-keys', fingerprint]);
     check(`${algorithm.id}: gpg lists it`, listed.filter((f) => f[0] === 'fpr').map((f) => f[9])[0], fingerprint);
     check(`${algorithm.id}: gpg sees the usage`, listed.filter((f) => f[0] === 'sec' || f[0] === 'ssb').map((f) => f[11]), ['scESC', 'e']);

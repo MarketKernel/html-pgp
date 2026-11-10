@@ -857,7 +857,8 @@ export async function revoke(locked: openpgp.PrivateKey, unlocked: openpgp.Priva
 export async function revocationCertificate(unlocked: openpgp.PrivateKey, why: Revocation, date = new Date()): Promise<string> {
   const list = new openpgp.PacketList<openpgp.SignaturePacket>();
   list.push(await keyRevocation(unlocked, why, date));
-  return openpgp.armor(openpgp.enums.armor.publicKey, list.write(), undefined, undefined, 'This is a revocation certificate');
+  // With the CRC line for a v4 key, as in exportKeys().
+  return openpgp.armor(openpgp.enums.armor.publicKey, list.write(), undefined, undefined, 'This is a revocation certificate', unlocked.keyPacket.version !== 6);
 }
 
 /** Applies a revocation certificate made by the key's owner. */
@@ -932,5 +933,8 @@ export function exportKeys(keys: openpgp.Key[], { armor, secret }: { armor: bool
     at += part.length;
   }
   if (!armor) return bytes;
-  return openpgp.armor(secret ? openpgp.enums.armor.privateKey : openpgp.enums.armor.publicKey, bytes);
+  // The CRC line, as key.armor() writes it for a v4 key: GnuPG 2.4 without it now and then
+  // reads the END line as base64 and refuses the block. RFC 9580 leaves it out for v6.
+  const checksum = keys.every((key) => key.keyPacket.version !== 6);
+  return openpgp.armor(secret ? openpgp.enums.armor.privateKey : openpgp.enums.armor.publicKey, bytes, undefined, undefined, undefined, checksum);
 }
